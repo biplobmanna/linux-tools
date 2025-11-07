@@ -1,0 +1,18 @@
+name: it-tools
+services:
+  it-tools:
+    container_name: it-tools
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    image: corentinth/it-tools:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.it-tools.rule=Host(`ittools.localhost`)"
+      - "traefik.http.services.it-tools.loadbalancer.server.port=80"
+    networks:
+      - tools
+
+networks:
+  tools:
+    external: true
