@@ -10,15 +10,15 @@ services:
         volumes:
             - /run/user/1000/podman/podman.sock:/var/run/docker.sock:z
             - ./traefik.yml:/etc/traefik/traefik.yml
+            - ./dynamic.yml:/etc/traefik/dynamic.yml
+            - ../cert.pem:/etc/traefik/certs/cert.pem:ro
+            - ../key.pem:/etc/traefik/certs/key.pem:ro
         security_opt:
             - label=type:container_runtime_t
         networks:
             - tools
         labels:
             - "traefik.enable=true"
-            - "traefik.http.routers.dashboard.rule=Host(`dns.localhost`)"
-            - "traefik.http.routers.dashboard.service=api@internal"
-            - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
 
 
 networks:

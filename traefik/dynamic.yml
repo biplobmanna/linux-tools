@@ -1,0 +1,17 @@
+# Dynamic configuration for TLS certificates
+tls:
+  certificates:
+    - certFile: /etc/traefik/certs/cert.pem
+      keyFile: /etc/traefik/certs/key.pem
+      stores:
+        - default
+
+# HTTP configuration for dashboard
+http:
+  routers:
+    dashboard:
+      rule: "Host(`dns.localhost`)"
+      service: api@internal
+      entryPoints:
+        - websecure
+      tls: {}

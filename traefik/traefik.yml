@@ -1,25 +1,48 @@
-# Docker configuration backend
-providers:
-  docker:
-    defaultRule: "Host(`{{ trimPrefix `/` .Name }}.localhost`)"
-
-# API and dashboard configuration
-api:
-  dashboard: true
-  insecure: true
+# Global configuration
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
 
 # Entry points
 entryPoints:
   web:
     address: ":80"
+    http:
+      redirections:
+        entrypoint:
+          to: websecure
+          scheme: https
+          permanent: true
   websecure:
     address: ":443"
 
-# HTTP configuration
-http:
-  routers:
-    dashboard:
-      rule: "Host(`dns.localhost`)"
-      service: api@internal
-      entryPoints:
-        - web
+# Providers
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    defaultRule: "Host(`{{ trimPrefix `/` .Name }}.localhost`)"
+    exposedByDefault: false
+    watch: true
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+
+# API and dashboard configuration
+api:
+  dashboard: true
+  debug: false
+
+# TLS configuration
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: /etc/traefik/certs/cert.pem
+        keyFile: /etc/traefik/certs/key.pem
+
+# Log configuration
+log:
+  level: INFO
+
+# Access log configuration
+accessLog: {}
