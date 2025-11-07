@@ -6,9 +6,27 @@ tls:
       stores:
         - default
 
-# HTTP configuration for dashboard
+# HTTP configuration
 http:
+  middlewares:
+    # Global HTTPS redirect middleware
+    https-redirect:
+      redirectScheme:
+        scheme: https
+        permanent: true
+
   routers:
+    # Global HTTP redirect router (catches all HTTP traffic)
+    http-catchall:
+      rule: "hostregexp(`{host:.+}`)"
+      entryPoints:
+        - web
+      middlewares:
+        - https-redirect
+      service: noop@internal
+      priority: 100
+
+    # Dashboard router
     dashboard:
       rule: "Host(`dns.localhost`)"
       service: api@internal
