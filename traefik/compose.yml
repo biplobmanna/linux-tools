@@ -1,0 +1,26 @@
+name: traefik
+services:
+    library:
+        container_name: traefik
+        image: traefik:latest
+        ports:
+            - 8888:8080
+            - 443:443
+            - 80:80
+        volumes:
+            - /run/user/1000/podman/podman.sock:/var/run/docker.sock:z
+            - ./traefik.yml:/etc/traefik/traefik.yml
+        security_opt:
+            - label=type:container_runtime_t
+        networks:
+            - tools
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.dashboard.rule=Host(`dns.localhost`)"
+            - "traefik.http.routers.dashboard.service=api@internal"
+            - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+
+
+networks:
+  tools:
+    external: true
